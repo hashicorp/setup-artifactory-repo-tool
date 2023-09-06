@@ -1,0 +1,1 @@
+# setup-artifactory-repo-tool
