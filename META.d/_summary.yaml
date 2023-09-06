@@ -1,0 +1,6 @@
+---
+schema: 1.1
+summary:
+  owner: team-rel-eng
+  description: |
+    setup-artifactory-repo-tool is a GitHub action used to install `artifactory-repo-tool` CLI

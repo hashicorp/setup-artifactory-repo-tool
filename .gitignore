@@ -1,0 +1,7 @@
+# Editors
+.vscode/
+.idea/
+*.iml
+
+# dotenv environment variables file
+.env
