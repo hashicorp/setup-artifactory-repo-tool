@@ -34,4 +34,4 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
-      run: DEST_DIR="${HOME}/bin" "${GITHUB_ACTION_PATH}/scripts/setup-artifactory-repo-tool.sh" "${{ inputs.version }}"
+      run: DEST_DIR="${{ inputs.install-dir }}" "${GITHUB_ACTION_PATH}/scripts/setup-artifactory-repo-tool.sh" "${{ inputs.version }}"

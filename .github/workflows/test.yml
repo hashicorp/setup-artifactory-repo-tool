@@ -15,7 +15,7 @@
       push:
         branches:
           - main
-          - 'releases/*'
+          - 'release/*'
           - inital-setup-art
     
     defaults:
