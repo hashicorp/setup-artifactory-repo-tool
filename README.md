@@ -32,7 +32,7 @@ jobs:
 
 Test locally with [act](https://github.com/nektos/act). You'll need a GitHub
 token authorized to download release assets from the
-[releases-api](https://github.com/hashicorp/releases-api) repository.
+[artifactory-repo-tool](https://github.com/hashicorp/artifactory-repo-tool) repository.
 
 ```bash
 act --container-architecture=linux/amd64 --input github-token=$(gh auth token) workflow_dispatch
