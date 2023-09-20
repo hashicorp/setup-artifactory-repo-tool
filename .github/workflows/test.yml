@@ -30,7 +30,7 @@
           matrix:
             version:
               - '${{ inputs.version }}'
-              - '2.2.3' # need not be the most recent
+              - '2.4.0' # need not be the most recent
         steps:
         - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     

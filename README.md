@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # ... potentially other steps ...
-      - uses: hashicorp/artifactory-repo-tool@v2
+      - uses: hashicorp/artifactory-repo-tool@v1
         with:
           github-token: ${{ secrets.ART_GITHUB_TOKEN }}
 ```
@@ -43,6 +43,6 @@ act --container-architecture=linux/amd64 --input github-token=$(gh auth token) w
 After your PR is merged to the default branch, `main`:
 
 1. Update locally: `git checkout main && git pull`
-1. Create a new tag for the release, e.g. `v0.0.1` with `git tag v0.0.1 && git push origin v0.0.1`.
+1. Create a new tag for the release, e.g. `v1.0.0` with `git tag v1.0.0 && git push origin v1.0.0`.
 1. Update the major version tag locally, e.g. `git tag -d v1 && git tag v1`
 1. Update the tag upstream, e.g. `git push origin :refs/tags/v1 && git push origin v1`
