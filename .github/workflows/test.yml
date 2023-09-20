@@ -1,0 +1,94 @@
+---
+    name: "Testing"
+    on:
+      workflow_dispatch:
+        inputs:
+          github-token:
+            type: string
+            description: "GitHub token to use to download artifactory-repo-tool"
+            required: true
+          version:
+            type: string
+            description: "Version of artifactory-repo-tool to install"
+    
+      pull_request:
+      push:
+        branches:
+          - main
+          - 'release/*'
+          - inital-setup-art
+    
+    defaults:
+      run:
+        shell: bash
+    
+    jobs:
+      unit:
+        runs-on: ubuntu-latest
+        # TODO test on all supported platforms (need GH-hosted darwin runners)
+        strategy:
+          matrix:
+            version:
+              - '${{ inputs.version }}'
+              - '2.2.3' # need not be the most recent
+        steps:
+        - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+    
+        - name: "Install tools (only for running locally via act)"
+          if: env.CI == 'true' && env.ACT == 'true'
+          env:
+            GH_TOKEN: ${{ inputs.github-token }}
+          run: |
+            run_quiet() { local logfile="${RUNNER_TEMP}/command.log" ; "$@" > "$logfile" 2>&1 || { cat "$logfile" ; exit 1 ; } ; }
+    
+            type -p curl >/dev/null || (apt update && apt install --yes curl)
+            curl --silent --show-error --fail --location \
+              --output /usr/share/keyrings/githubcli-archive-keyring.gpg \
+              https://cli.github.com/packages/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list
+            run_quiet apt update
+            run_quiet apt install --yes gh
+            gh --version
+    
+            # Install latest yq
+            BINARY=yq_linux_amd64
+            VERSION="$(gh --repo=https://github.com/mikefarah/yq release list |awk '$2 == "Latest" { print $3 }')"
+            gh --repo=https://github.com/mikefarah/yq release download "$VERSION" --clobber --output /usr/bin/yq --pattern "$BINARY"
+            /bin/chmod 755 /usr/bin/yq
+            yq --version
+    
+        - name: Install artifactory-repo-tool
+          uses: ./
+          id: install
+          with:
+            github-token: ${{ inputs.github-token || secrets.TOKEN_DOWNLOAD_ART }}
+            version: ${{ matrix.version }}
+    
+        - name: Test reported version
+          run: |
+            got_ver="${{ steps.install.outputs.version }}"
+            if [ -z "$got_ver" ]; then
+              echo "Failed to detect installed version: step output empty." 1>&2
+              exit 1
+            fi
+    
+            exp_ver="${{ matrix.version }}"
+            if [ -z "$exp_ver" ]; then # default version according to action.yml
+              exp_ver="$(yq eval .inputs.version.default action.yml)"
+            fi
+            if [ -z "$exp_ver" ]; then
+              echo "Failed to determine expected version of artifactory-repo-tool" 1>&2
+              exit 1
+            fi
+    
+            if [ "v${got_ver#v}" != "v${exp_ver#v}" ]; then
+              echo "Incorrect artifactory-repo-tool found (wrong version installed?  target version not first in PATH?)" 1>&2
+              exit 1
+            fi
+    
+        # test that a single job can call the action multiple times
+        - name: Install artifactory-repo-tool again
+          uses: ./
+          with:
+            github-token: ${{ inputs.github-token || secrets.TOKEN_DOWNLOAD_ART }}
+            version: ${{ matrix.version }}

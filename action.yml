@@ -1,0 +1,37 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+---
+name: "Setup artifactory-repo-tool"
+author: "HashiCorp"
+description: "Install artifactory-repo-tool"
+
+branding:
+  color: "gray-dark"
+  icon: "package"
+
+inputs:
+  github-token:
+    description: "GitHub token with release asset access to artifactory-repo-tool."
+    required: true
+  version:
+    description: "Version of artifactory-repo-tool to install, e.g. v1.0.3."
+    default: "2.2.3"
+  install-dir:
+    description: "Where the tool will be installed; this directory will be added to GITHUB_PATH."
+    default: "$HOME/bin"
+
+outputs:
+  version:
+    description: "The version of artifactory-repo-tool that was installed as reported by the tool"
+    value: '2.2.3'
+
+runs:
+  using: composite
+  steps:
+    - name: Install artifactory-repo-tool tool
+      id: install
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: DEST_DIR="${{ inputs.install-dir }}" "${GITHUB_ACTION_PATH}/scripts/setup-artifactory-repo-tool.sh" "${{ inputs.version }}"
