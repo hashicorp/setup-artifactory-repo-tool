@@ -16,7 +16,7 @@ inputs:
     required: true
   version:
     description: "Version of artifactory-repo-tool to install, e.g. v1.0.3."
-    default: "2.4.0"
+    default: "2.6.0"
   install-dir:
     description: "Where the tool will be installed; this directory will be added to GITHUB_PATH."
     default: "$HOME/bin"
@@ -24,7 +24,7 @@ inputs:
 outputs:
   version:
     description: "The version of artifactory-repo-tool that was installed as reported by the tool"
-    value: "2.4.0"
+    value: "2.6.0"
 
 runs:
   using: composite
