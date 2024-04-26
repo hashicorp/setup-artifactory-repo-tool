@@ -3,7 +3,9 @@
 
 ---
 schema: 1.1
+partition: release-engineering
+category: github-action
 summary:
-  owner: team-rel-eng
+  owner: team-selfmanaged-releng
   description: |
     setup-artifactory-repo-tool is a GitHub action used to install `artifactory-repo-tool` CLI
