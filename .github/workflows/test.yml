@@ -29,8 +29,8 @@
       strategy:
         matrix:
           version:
-            - '2.7.0'
-            - '2.6.5'
+            - '${{ inputs.version }}'
+            - '2.7.0' # need not be the most recent
       steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4.0.0
   
@@ -62,7 +62,7 @@
         id: install
         with:
           github-token: ${{ inputs.github-token || secrets.TOKEN_DOWNLOAD_ART }}
-          version: ${{ inputs.version || matrix.version }}
+          version: ${{ matrix.version }}
   
       - name: Test reported version
         run: |
@@ -72,7 +72,7 @@
             exit 1
           fi
   
-          exp_ver="${{ inputs.version || matrix.version }}"
+          exp_ver="${{ matrix.version }}"
           if [ -z "$exp_ver" ]; then # default version according to action.yml
             exp_ver="$(yq eval .inputs.version.default action.yml)"
           fi
@@ -91,4 +91,4 @@
         uses: ./
         with:
           github-token: ${{ inputs.github-token || secrets.TOKEN_DOWNLOAD_ART }}
-          version: ${{ inputs.version || matrix.version }}
+          version: ${{ matrix.version }}
